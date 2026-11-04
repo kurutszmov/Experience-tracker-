@@ -6,6 +6,12 @@
 
 ---
 
+## 📱 Mobile app (Android / iOS)
+
+The frontend is also packaged as a native mobile app with Capacitor. See **[MOBILE.md](MOBILE.md)** for build instructions (APK via GitHub Actions, Android Studio, Xcode).
+
+---
+
 ## Project Description
 
 Finance Tracker is a web application that helps users take control of their personal finances. Users can register, log in securely, manage multiple accounts, track income and expenses with categories, and visualize their financial data through an interactive analytics dashboard.

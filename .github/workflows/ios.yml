@@ -1,0 +1,52 @@
+name: iOS (simulator build)
+
+# Checks that the iOS project compiles. Installing on a real iPhone / App Store
+# requires an Apple Developer account and signing — see MOBILE.md.
+on:
+  push:
+    branches: ["**"]
+    paths: ["frontend/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app and sync into iOS project
+        env:
+          API_URL: ${{ vars.VITE_API_URL }}
+        run: |
+          if [ -n "$API_URL" ]; then export VITE_API_URL="$API_URL"; fi
+          npm run build
+          npx cap sync ios
+
+      - name: Build for iOS Simulator (unsigned)
+        working-directory: frontend/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      - name: Zip .app
+        working-directory: frontend/ios/App/build/Build/Products/Debug-iphonesimulator
+        run: zip -r FinTrack-simulator.zip App.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FinTrack-ios-simulator
+          path: frontend/ios/App/build/Build/Products/Debug-iphonesimulator/FinTrack-simulator.zip

@@ -5,8 +5,22 @@ require('./config/db');
 
 const app = express();
 
+// Web dev server + Capacitor mobile app origins (Android: https://localhost, iOS: capacitor://localhost).
+// Extra origins (e.g. a deployed web frontend) can be added via CORS_ORIGINS=https://a.com,https://b.com
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://localhost',
+    'http://localhost',
+    'capacitor://localhost',
+    ...(process.env.CORS_ORIGINS || '').split(',').map((o) => o.trim()).filter(Boolean),
+];
+
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+        // Requests without Origin (curl, health checks) are allowed
+        if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
 }));
 

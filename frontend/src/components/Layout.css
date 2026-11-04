@@ -1,6 +1,7 @@
 .layoutContainer {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   background-color: var(--colorNeutral50);
 }
 
@@ -10,14 +11,14 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4rem;
+  height: calc(4rem + var(--safeTop));
   background-color: var(--colorWhite);
   border-bottom: 1px solid var(--colorNeutral200);
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--spacing4);
+  padding: var(--safeTop) var(--spacing4) 0;
 }
 
 .headerLogo {
@@ -75,6 +76,8 @@
   left: 0;
   height: 100%;
   width: 16rem;
+  padding-top: var(--safeTop);
+  padding-bottom: var(--safeBottom);
   background-color: var(--colorWhite);
   border-right: 1px solid var(--colorNeutral200);
   display: flex;
@@ -193,7 +196,8 @@
 .mainContent {
   flex: 1;
   overflow: auto;
-  padding-top: 4rem;
+  padding-top: calc(4rem + var(--safeTop));
+  padding-bottom: var(--safeBottom);
 }
 
 /* Desktop Styles */
